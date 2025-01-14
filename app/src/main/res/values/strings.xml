@@ -2,4 +2,7 @@
     <string name="app_name">Paisa</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="add_new_transaction">Add new transaction</string>
+    <string name="home_fragment">Home Fragment</string>
+    <string name="available_balance">Available balance</string>
 </resources>
