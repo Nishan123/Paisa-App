@@ -4,11 +4,15 @@ import com.example.paisa.models.TransactionModel
 
 interface TransactionRepo {
     fun addTransaction(
-        transactionId: String,
-        userId: String,
         transaction: TransactionModel,
         callback: (Boolean, String) -> Unit,
     )
 
-    fun deleteTransaction(userId: String,transactionId: String, callback: (Boolean, String) -> Unit)
+    fun deleteTransaction(transactionId: String, callback: (Boolean, String) -> Unit)
+
+    fun updateTransaction(transactionId: String, data:MutableMap<String, Any>, callback: (Boolean, String) -> Unit)
+
+    fun getAllTransaction(callback: (Boolean, String, List<TransactionModel>) -> Unit)
+
+    fun getParticularTransaction(transactionType:String,callback: (Boolean, String, List<TransactionModel>) -> Unit )
 }

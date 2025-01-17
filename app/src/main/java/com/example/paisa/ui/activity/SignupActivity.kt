@@ -10,10 +10,11 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.paisa.R
 import com.example.paisa.databinding.ActivitySignupBinding
 import com.example.paisa.models.UserModel
+import com.example.paisa.repo.UserRepo
 import com.example.paisa.repo.UserRepoImpl
 import com.example.paisa.viewModel.UserViewModel
 
-class SignupActivity : AppCompatActivity() {
+class SignupActivity() : AppCompatActivity() {
     lateinit var signupBinding: ActivitySignupBinding
     lateinit var userViewModel: UserViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,8 +29,7 @@ class SignupActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        var repo = UserRepoImpl()
-        userViewModel = UserViewModel(repo)
+        userViewModel = UserViewModel(UserRepoImpl())
 
         signupBinding.signupButton.setOnClickListener {
             var firstName = signupBinding.firstNameText.text.toString()
@@ -48,17 +48,17 @@ class SignupActivity : AppCompatActivity() {
                     userViewModel.addUserToDb(
                         userId,
                         userModel,
-                    ) { success, messsge ->
-                        if (success) {
+                    ) { dbSuccess, dbMessage ->
+                        if (dbSuccess) {
                             Toast.makeText(
                                 this@SignupActivity,
-                                "Account created successfully !",
+                                dbMessage,
                                 Toast.LENGTH_SHORT
                             ).show()
                         } else {
                             Toast.makeText(
                                 this@SignupActivity,
-                                message, Toast.LENGTH_LONG
+                                dbMessage, Toast.LENGTH_LONG
                             ).show()
                         }
                     }

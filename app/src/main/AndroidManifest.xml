@@ -13,9 +13,18 @@
         android:theme="@style/Theme.Paisa"
         tools:targetApi="31">
         <activity
-            android:name=".ui.activity.LandingActivity"
-            android:exported="false"/>
+            android:name=".ui.activity.AddTransaction"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.activity.LandingActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.activity.NavigatorActivity"
             android:exported="true">
@@ -27,8 +36,14 @@
         </activity>
         <activity
             android:name=".ui.activity.SignupActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:exported="false"/>
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.activity.LoginActivity"
             android:exported="false" />
