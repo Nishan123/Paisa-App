@@ -15,4 +15,5 @@ interface TransactionRepo {
     fun getAllTransaction(callback: (Boolean, String, List<TransactionModel>) -> Unit)
 
     fun getParticularTransaction(transactionType:String,callback: (Boolean, String, List<TransactionModel>) -> Unit )
+
 }

@@ -2,29 +2,33 @@ package com.example.paisa.models
 
 import android.os.Parcel
 import android.os.Parcelable
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-
 
 data class TransactionModel (
     var transactionId:String ="",
     var title:String="",
     var description:String="",
     var amount:Int=0,
+    var transactionType:String="",
     var isLend:Boolean=false,
     var lendTo:String="",
-    var transactionDate:LocalDateTime= LocalDateTime.now(),
-    var lastEditDate: LocalDateTime = transactionDate
+    var transactionDate:String="",
+    var transactionTime:String="",
+    var lastEditDate: String="",
+    var lastEditTime: String=""
+
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()?:"",
         parcel.readString()?:"",
         parcel.readString()?:"",
-        parcel.readInt(),
+        parcel.readInt()?:0,
+        parcel.readString()?:"",
         parcel.readByte() != 0.toByte(),
         parcel.readString()?:"",
-        LocalDateTime.parse(parcel.readString(), DateTimeFormatter.ISO_DATE_TIME ),
-        LocalDateTime.parse(parcel.readString(),DateTimeFormatter.ISO_DATE_TIME)
+        parcel.readString()?:"",
+        parcel.readString()?:"",
+        parcel.readString()?:"",
+        parcel.readString()?:""
     ) {
     }
 
@@ -33,8 +37,13 @@ data class TransactionModel (
         parcel.writeString(title)
         parcel.writeString(description)
         parcel.writeInt(amount)
+        parcel.writeString(transactionType)
         parcel.writeByte(if (isLend) 1 else 0)
         parcel.writeString(lendTo)
+        parcel.writeString(transactionDate)
+        parcel.writeString(transactionTime)
+        parcel.writeString(lastEditDate)
+        parcel.writeString(lastEditTime)
     }
 
     override fun describeContents(): Int {

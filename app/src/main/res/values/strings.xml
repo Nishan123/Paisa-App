@@ -5,4 +5,5 @@
     <string name="add_new_transaction">Add new transaction</string>
     <string name="home_fragment">Home Fragment</string>
     <string name="available_balance">Available balance</string>
+    <string name="add_your_transaction_details">Add your transaction details</string>
 </resources>

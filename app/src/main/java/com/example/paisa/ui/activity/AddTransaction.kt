@@ -1,6 +1,9 @@
 package com.example.paisa.ui.activity
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.os.Bundle
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -11,8 +14,8 @@ import com.example.paisa.databinding.ActivityAddTransactionBinding
 import com.example.paisa.models.TransactionModel
 import com.example.paisa.repo.TransactionRepoImpl
 import com.example.paisa.viewModel.TransactionViewModel
-import java.time.LocalDateTime
-import kotlin.time.Duration.Companion.milliseconds
+import java.util.Calendar
+
 
 class AddTransaction : AppCompatActivity() {
     lateinit var binding: ActivityAddTransactionBinding
@@ -27,6 +30,61 @@ class AddTransaction : AppCompatActivity() {
         setContentView(binding.root)
 
         transactionViewModel = TransactionViewModel(TransactionRepoImpl())
+        val transactionTypes = listOf("Income", "Expenses", "Transfer")
+        val adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_item,
+            transactionTypes
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        // Set the adapter to the Spinner
+        binding.spinner.adapter = adapter
+
+        var tYear:Int  = 0
+        var tMonth:Int =0
+        var tDay:Int= 0
+        var transactionDate:String = ""
+
+        binding.datePickerButton.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+            val datePicker = DatePickerDialog(
+                this@AddTransaction,
+                { _, selectedYear, selectedMonth, selectedDay ->
+                    // Update button text with selected date
+                    binding.datePickerButton.text = "${selectedMonth+1} /$selectedDay/$selectedYear"
+
+                    transactionDate =  "${selectedMonth + 1}/$selectedDay/$selectedYear"
+                },
+                year,
+                month,
+                day
+            )
+            datePicker.show()
+        }
+
+        val tHour:Int = 0
+        val tMin:Int = 0
+        var transactionTime:String=""
+        binding.timePickerButton.setOnClickListener {
+            val hours = Calendar.HOUR
+            val minutes = Calendar.MINUTE
+            val timePicker = TimePickerDialog(this@AddTransaction, { _, hour, minute ->
+                binding.timePickerButton.text = "$hours : $minutes"
+                transactionTime = "$hours : $minutes"
+            }, hours, minutes, false)
+            timePicker.show()
+        }
+
+
+        val transactionDateTime:String  = "${transactionDate} - ${transactionTime}"
+
+
+
 
         binding.addTransactionButton.setOnClickListener {
 
@@ -41,16 +99,21 @@ class AddTransaction : AppCompatActivity() {
                 val title = binding.title.text.toString()
                 val description = binding.description.text.toString()
                 val amount = binding.amount.text.toString().toInt()
+                val transactionType = binding.spinner.selectedItem.toString()
                 val transactionModel = TransactionModel(
                     "",
                     title,
                     description,
                     amount,
+                    transactionType,
                     false,
                     "",
-                    LocalDateTime.now(),
-                    LocalDateTime.now(),
+                    transactionDate,
+                    transactionTime,
+                    transactionDate,
+                    transactionTime,
                 )
+
 
                 transactionViewModel.addTransaction(transactionModel) { success, message ->
                     if (success) {
@@ -65,7 +128,6 @@ class AddTransaction : AppCompatActivity() {
                     }
                 }
             }
-
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
