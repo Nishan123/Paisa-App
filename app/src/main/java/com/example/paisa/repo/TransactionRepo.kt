@@ -12,7 +12,7 @@ interface TransactionRepo {
 
     fun updateTransaction(transactionId: String, data:MutableMap<String, Any>, callback: (Boolean, String) -> Unit)
 
-    fun getAllTransaction(callback: (Boolean, String, List<TransactionModel>) -> Unit)
+    fun getAllTransaction(callback: (Boolean, String, List<TransactionModel>?) -> Unit)
 
     fun getParticularTransaction(transactionType:String,callback: (Boolean, String, List<TransactionModel>) -> Unit )
 

@@ -2,6 +2,7 @@ package com.example.paisa.ui.fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -36,22 +37,34 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-var repo = TransactionRepoImpl()
-        transactionViewModel =TransactionViewModel(repo)
+
+        var repo = TransactionRepoImpl()
+        transactionViewModel = TransactionViewModel(repo)
 
         adapter = TransactionAdapter(requireContext(), ArrayList())
-
         transactionViewModel.getAllTransaction()
-        transactionViewModel.allTransaction.observe(requireActivity()){
-            it?.let{
+        transactionViewModel.allTransaction.observe(requireActivity()) { transactions ->
+            transactions?.let {
                 adapter.updateData(it)
+            }
+
+        }
+
+        transactionViewModel.empty.observe(requireActivity()) { empty ->
+            if (empty) {
+//                homeBinding.progressBar.visibility = View.GONE
+                homeBinding.noTransactionText.visibility = View.VISIBLE
+            } else {
+                homeBinding.noTransactionText.visibility = View.GONE
+//                homeBinding.noTransactionText.visibility = View.GONE
             }
         }
 
-        transactionViewModel.loading.observe(requireActivity()){loading->
-            if(loading){
+        transactionViewModel.loading.observe(requireActivity()) { loading ->
+            // Only show progress bar if loading and no transactions yet
+            if (loading) {
                 homeBinding.progressBar.visibility = View.VISIBLE
-            }else{
+            } else {
                 homeBinding.progressBar.visibility = View.GONE
             }
         }
@@ -65,7 +78,7 @@ var repo = TransactionRepoImpl()
             var intent = Intent(requireContext(), AddTransaction::class.java)
             startActivity(intent)
         }
-        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT){
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             override fun onMove(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,

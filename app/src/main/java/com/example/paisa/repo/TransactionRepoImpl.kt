@@ -1,5 +1,6 @@
 package com.example.paisa.repo
 
+import android.util.Log
 import com.example.paisa.models.TransactionModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -7,9 +8,9 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-class TransactionRepoImpl:TransactionRepo {
-    var database:FirebaseDatabase = FirebaseDatabase.getInstance()
-    var db:DatabaseReference = database.reference.child("transactions")
+class TransactionRepoImpl : TransactionRepo {
+    var database: FirebaseDatabase = FirebaseDatabase.getInstance()
+    var db: DatabaseReference = database.reference.child("transactions")
 
 
     override fun addTransaction(
@@ -20,10 +21,9 @@ class TransactionRepoImpl:TransactionRepo {
         transaction.transactionId = id
 
         db.child(id).setValue(transaction).addOnCompleteListener {
-            if(it.isSuccessful){
+            if (it.isSuccessful) {
                 callback(true, "Transaction added successfully")
-            }else
-            {
+            } else {
                 callback(false, "Failed to add transaction !")
             }
         }
@@ -31,9 +31,9 @@ class TransactionRepoImpl:TransactionRepo {
 
     override fun deleteTransaction(transactionId: String, callback: (Boolean, String) -> Unit) {
         db.child(transactionId).removeValue().addOnCompleteListener {
-            if(it.isSuccessful){
+            if (it.isSuccessful) {
                 callback(true, "Transaction deleted successfully")
-            }else{
+            } else {
                 callback(true, "Failed to delete transaction")
 
             }
@@ -45,34 +45,38 @@ class TransactionRepoImpl:TransactionRepo {
         data: MutableMap<String, Any>,
         callback: (Boolean, String) -> Unit,
     ) {
-       db.child(transactionId).updateChildren(data).addOnCompleteListener {
-           if(it.isSuccessful){
-               callback(true, "Transaction edited successfully")
-           }else{
-               callback(true, "Failed to edit transaction")
+        db.child(transactionId).updateChildren(data).addOnCompleteListener {
+            if (it.isSuccessful) {
+                callback(true, "Transaction edited successfully")
+            } else {
+                callback(true, "Failed to edit transaction")
 
-           }
-       }
+            }
+        }
     }
 
-    override fun getAllTransaction(callback: (Boolean, String, List<TransactionModel>) -> Unit) {
-        db.addValueEventListener(object :ValueEventListener{
+    override fun getAllTransaction(callback: (Boolean, String, List<TransactionModel>?) -> Unit) {
+        db.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                if(snapshot.exists()){
+                if (snapshot.exists()) {
                     var transactions = mutableListOf<TransactionModel>()
-                    for(eachData in snapshot.children){
+                    for (eachData in snapshot.children) {
                         var model = eachData.getValue(TransactionModel::class.java)
 
-                        if(model!=null){
+                        if (model != null) {
                             transactions.add(model)
                         }
                     }
+
                     callback(true, "Transactions are here !", transactions)
+                } else {
+                    callback(false, "Transactions are here !", null)
+
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                callback(false,error.message, emptyList())
+                callback(false, error.message, emptyList())
             }
         })
     }
@@ -81,7 +85,7 @@ class TransactionRepoImpl:TransactionRepo {
         transactionType: String,
         callback: (Boolean, String, List<TransactionModel>) -> Unit,
     ) {
-        TODO("Not yet implemented")
+
     }
 
 

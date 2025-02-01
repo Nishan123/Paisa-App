@@ -1,5 +1,6 @@
 package com.example.paisa.viewModel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.paisa.models.TransactionModel
 import com.example.paisa.repo.TransactionRepo
@@ -24,6 +25,11 @@ class TransactionViewModel(val repo: TransactionRepo) {
     var allTransaction = MutableLiveData<List<TransactionModel>>()
         get() = _allTransaction
 
+    var _empty = MutableLiveData<Boolean>()
+    var empty = MutableLiveData<Boolean>()
+        get() = _empty
+
+
     fun updateTransaction(
         transactionId: String,
         data: MutableMap<String, Any>,
@@ -37,9 +43,19 @@ class TransactionViewModel(val repo: TransactionRepo) {
         get() = _loading
 
     fun getAllTransaction() {
+        _loading.value = true
         repo.getAllTransaction { success, message, data ->
             if (success) {
+
                 _allTransaction.value = data
+                _loading.value = false
+                _empty.value = false
+
+
+            } else {
+                _allTransaction.value = null
+                _loading.value = false
+                _empty.value = true
             }
         }
     }

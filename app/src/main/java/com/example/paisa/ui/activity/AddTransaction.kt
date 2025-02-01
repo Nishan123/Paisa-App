@@ -41,11 +41,12 @@ class AddTransaction : AppCompatActivity() {
         // Set the adapter to the Spinner
         binding.spinner.adapter = adapter
 
-        var tYear:Int  = 0
-        var tMonth:Int =0
-        var tDay:Int= 0
-        var transactionDate:String = ""
-
+        val calendar = Calendar.getInstance()
+        val tYear = calendar.get(Calendar.YEAR)
+        val tMonth = calendar.get(Calendar.MONTH)
+        val tDay = calendar.get(Calendar.DAY_OF_MONTH)
+        var transactionDate: String = "${tMonth + 1}/$tDay/$tYear"
+        print("${tMonth + 1}/$tDay/$tYear")
         binding.datePickerButton.setOnClickListener {
             val calendar = Calendar.getInstance()
             val year = calendar.get(Calendar.YEAR)
@@ -56,9 +57,11 @@ class AddTransaction : AppCompatActivity() {
                 this@AddTransaction,
                 { _, selectedYear, selectedMonth, selectedDay ->
                     // Update button text with selected date
-                    binding.datePickerButton.text = "${selectedMonth+1} /$selectedDay/$selectedYear"
+                    binding.datePickerButton.text =
+                        "${selectedMonth + 1} /$selectedDay/$selectedYear"
 
-                    transactionDate =  "${selectedMonth + 1}/$selectedDay/$selectedYear"
+                    transactionDate = "${selectedMonth + 1}/$selectedDay/$selectedYear"
+
                 },
                 year,
                 month,
@@ -67,9 +70,9 @@ class AddTransaction : AppCompatActivity() {
             datePicker.show()
         }
 
-        val tHour:Int = 0
-        val tMin:Int = 0
-        var transactionTime:String=""
+        val tHour = calendar.get(Calendar.HOUR_OF_DAY)
+        val tMin: Int = calendar.get(Calendar.MINUTE)
+        var transactionTime: String = "$tHour : $tMin"
         binding.timePickerButton.setOnClickListener {
             val hours = Calendar.HOUR
             val minutes = Calendar.MINUTE
@@ -79,12 +82,6 @@ class AddTransaction : AppCompatActivity() {
             }, hours, minutes, false)
             timePicker.show()
         }
-
-
-        val transactionDateTime:String  = "${transactionDate} - ${transactionTime}"
-
-
-
 
         binding.addTransactionButton.setOnClickListener {
 
