@@ -1,5 +1,7 @@
 package com.example.paisa.repo
 
+import android.content.Context
+import android.net.Uri
 import com.example.paisa.models.UserModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -15,4 +17,7 @@ interface UserRepo {
 
     fun forgetPassword(email: String, callback: (Boolean, String) -> Unit)
     fun getCurrentUser():FirebaseUser?
+    fun uploadProfilePic(context:Context, uri:Uri, callback: (String?)->Unit)
+    fun getFileNameFromUri(context: Context, uri: Uri):String?
+
 }

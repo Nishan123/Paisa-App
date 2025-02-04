@@ -9,10 +9,6 @@
     tools:context=".ui.fragment.ProfileFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Profile Fragment" />
 
     <androidx.cardview.widget.CardView
         android:layout_width="120dp"
@@ -23,7 +19,13 @@
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:src="@drawable/profile" />
+
     </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Profile Fragment" />
 
 
 </LinearLayout>

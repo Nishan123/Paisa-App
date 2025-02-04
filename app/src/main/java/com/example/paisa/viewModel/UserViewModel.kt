@@ -1,5 +1,7 @@
 package com.example.paisa.viewModel
 
+import android.content.Context
+import android.net.Uri
 import com.example.paisa.models.UserModel
 import com.example.paisa.repo.UserRepo
 import com.google.firebase.auth.FirebaseUser
@@ -22,5 +24,8 @@ class UserViewModel(var repo:UserRepo) {
     }
     fun getCurrentUser(): FirebaseUser?{
         return repo.getCurrentUser()
+    }
+    fun uploadProfilePic(context: Context, imageUri: Uri, callback: (String?) -> Unit){
+       repo.uploadProfilePic(context,imageUri,callback)
     }
 }
