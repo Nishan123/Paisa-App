@@ -60,14 +60,19 @@ class TransactionViewModel(val repo: TransactionRepo) {
         }
     }
 
-
-    fun getParticularTransaction(
-        transactionType: String,
-        callback: (Boolean, String, List<TransactionModel>) -> Unit,
-    ) {
-
+    fun getParticularTransaction(transactionType: String) {
         _loading.value = true
-        repo.getParticularTransaction(transactionType, callback)
+        repo.getParticularTransaction(transactionType) { success, message, transactions ->
+            if (success) {
+                _allTransaction.value = transactions
+                _loading.value = false
+                _empty.value = transactions.isEmpty()
+            } else {
+                _allTransaction.value = emptyList()
+                _loading.value = false
+                _empty.value = true
+            }
+        }
     }
 
 }

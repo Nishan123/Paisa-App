@@ -16,4 +16,5 @@ interface TransactionRepo {
 
     fun getParticularTransaction(transactionType:String,callback: (Boolean, String, List<TransactionModel>) -> Unit )
 
+    fun getCalculations(callback: (Int, Int, Int) -> Unit)
 }

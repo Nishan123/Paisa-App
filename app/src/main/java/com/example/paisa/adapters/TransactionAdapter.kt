@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.paisa.R
@@ -18,6 +19,7 @@ class TransactionAdapter(val context: Context,  var data: ArrayList<TransactionM
         val amount: TextView = itemView.findViewById(R.id.priceText)
         val date:TextView = itemView.findViewById(R.id.date)
         val time:TextView= itemView.findViewById(R.id.time)
+        val transactionIcon:ImageView =itemView.findViewById(R.id.transactionIcon)
 
     }
 
@@ -32,6 +34,13 @@ class TransactionAdapter(val context: Context,  var data: ArrayList<TransactionM
         holder.amount.text= "${data[position].amount}"
         holder.date.text = data[position].transactionDate
         holder.time.text = data[position].transactionTime
+        
+        // Set transaction icon based on transaction type
+        when(data[position].transactionType) {
+            "Expenses" -> holder.transactionIcon.setImageResource(R.drawable.baseline_arrow_circle_down_24)
+            "Income" -> holder.transactionIcon.setImageResource(R.drawable.baseline_arrow_circle_up_24)
+            else -> holder.transactionIcon.setImageResource(R.drawable.baseline_compare_arrows_24)
+        }
     }
 
     override fun getItemCount(): Int {

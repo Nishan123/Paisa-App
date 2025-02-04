@@ -83,10 +83,55 @@ class TransactionRepoImpl : TransactionRepo {
 
     override fun getParticularTransaction(
         transactionType: String,
-        callback: (Boolean, String, List<TransactionModel>) -> Unit,
+        callback: (Boolean, String, List<TransactionModel>) -> Unit
     ) {
+        db.orderByChild("transactionType").equalTo(transactionType)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val transactions = mutableListOf<TransactionModel>()
+                    
+                    if (snapshot.exists()) {
+                        for (transactionSnapshot in snapshot.children) {
+                            val transaction = transactionSnapshot.getValue(TransactionModel::class.java)
+                            transaction?.let { transactions.add(it) }
+                        }
+                        callback(true, "Transactions filtered successfully", transactions)
+                    } else {
+                        callback(false, "No transactions found", emptyList())
+                    }
+                }
 
+                override fun onCancelled(error: DatabaseError) {
+                    callback(false, error.message, emptyList())
+                }
+            })
     }
 
+    override fun getCalculations(callback: (Int, Int, Int) -> Unit) {
+        db.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                var totalIncome = 0
+                var totalExpenditure = 0
 
+                if (snapshot.exists()) {
+                    for (transaction in snapshot.children) {
+                        val model = transaction.getValue(TransactionModel::class.java)
+                        model?.let {
+                            when (it.transactionType) {
+                                "Income" -> totalIncome += it.amount
+                                "Expenses" -> totalExpenditure += it.amount
+                            }
+                        }
+                    }
+                }
+                
+                val availableBalance = totalIncome - totalExpenditure
+                callback(availableBalance, totalIncome, totalExpenditure)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                callback(0, 0, 0)
+            }
+        })
+    }
 }

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.paisa.adapters.TransactionAdapter
 import com.example.paisa.databinding.FragmentHomeBinding
+import com.example.paisa.repo.TransactionRepo
 import com.example.paisa.repo.TransactionRepoImpl
 import com.example.paisa.ui.activity.AddTransaction
 import com.example.paisa.viewModel.TransactionViewModel
@@ -21,22 +22,24 @@ import java.util.Objects
 
 class HomeFragment : Fragment() {
 
-    lateinit var homeBinding: FragmentHomeBinding
+    private lateinit var binding: FragmentHomeBinding
+    private lateinit var transactionRepo: TransactionRepo
     lateinit var transactionViewModel: TransactionViewModel
     lateinit var adapter: TransactionAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        // Inflate the layout for this fragment
-        homeBinding = FragmentHomeBinding.inflate(inflater, container, false)
-        return homeBinding.root
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
+        transactionRepo = TransactionRepoImpl()
+        updateBalanceCard()
 
         var repo = TransactionRepoImpl()
         transactionViewModel = TransactionViewModel(repo)
@@ -52,29 +55,25 @@ class HomeFragment : Fragment() {
 
         transactionViewModel.empty.observe(requireActivity()) { empty ->
             if (empty) {
-//                homeBinding.progressBar.visibility = View.GONE
-                homeBinding.noTransactionText.visibility = View.VISIBLE
+                binding.noTransactionText.visibility = View.VISIBLE
             } else {
-                homeBinding.noTransactionText.visibility = View.GONE
-//                homeBinding.noTransactionText.visibility = View.GONE
+                binding.noTransactionText.visibility = View.GONE
             }
         }
 
         transactionViewModel.loading.observe(requireActivity()) { loading ->
             // Only show progress bar if loading and no transactions yet
             if (loading) {
-                homeBinding.progressBar.visibility = View.VISIBLE
+                binding.progressBar.visibility = View.VISIBLE
             } else {
-                homeBinding.progressBar.visibility = View.GONE
+                binding.progressBar.visibility = View.GONE
             }
         }
 
-        homeBinding.recyclerView.adapter = adapter
-        homeBinding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-
-
-        homeBinding.fab.setOnClickListener {
+        binding.fab.setOnClickListener {
             var intent = Intent(requireContext(), AddTransaction::class.java)
             startActivity(intent)
         }
@@ -92,6 +91,38 @@ class HomeFragment : Fragment() {
             }
 
         })
+
+        // Setup chip group listeners
+        binding.all.isChecked = true  // Default selection
+        
+        binding.apply {
+            all.setOnClickListener {
+                progressBar.visibility = View.VISIBLE
+                transactionViewModel.getAllTransaction()
+            }
+
+            income.setOnClickListener {
+                progressBar.visibility = View.VISIBLE
+                transactionViewModel.getParticularTransaction("Income")
+            }
+
+            expenses.setOnClickListener {
+                progressBar.visibility = View.VISIBLE
+                transactionViewModel.getParticularTransaction("Expenses")
+            }
+
+            transfer.setOnClickListener {
+                progressBar.visibility = View.VISIBLE
+                transactionViewModel.getParticularTransaction("Transfer")
+            }
+        }
     }
 
+    private fun updateBalanceCard() {
+        transactionRepo.getCalculations { availableBalance, totalIncome, totalExpenditure ->
+            binding.availableBalance.text = "Rs. $availableBalance"
+            binding.incomeAmount.text = totalIncome.toString()
+            binding.expenditureAmount.text = totalExpenditure.toString()
+        }
+    }
 }
